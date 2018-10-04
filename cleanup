@@ -1,0 +1,19 @@
+. envs
+
+echo Deleting sub...
+gcloud pubsub subscriptions delete projects/toronto-summit-iot/subscriptions/my-subscription
+
+echo Deleting topic...
+gcloud pubsub topics delete projects/toronto-summit-iot/topics/events
+
+echo Removing virtual device...
+gcloud -q iot devices delete virtual-device --region=us-central1 --registry=gcs-toronto
+
+echo Removing device registry...
+gcloud -q iot registries delete --region=us-central1 gcs-toronto
+
+echo Home folder cleanup...
+rm rsa_private.pem rsa_cert.pem
+rm -rf nodejs-docs-samples
+
+echo All done. Allons-y\!

@@ -1,0 +1,6 @@
+PROMPT="\e[1;31msh>\e[0m"
+PROJECT_ID=$GOOGLE_CLOUD_PROJECT
+REGION=us-central1
+REGISTRY=gcs-toronto
+TOPIC=events
+DEVICE=virtual-device

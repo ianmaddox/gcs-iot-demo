@@ -1,0 +1,77 @@
+. envs
+
+## START
+clear
+echo 'Generate a device key pair:'
+echo
+echo -e $PROMPT "openssl req -x509 -newkey rsa:2048 -keyout rsa_private.pem -nodes -out rsa_cert.pem -subj \"/CN=unused\""
+read
+
+openssl req -x509 -newkey rsa:2048 -keyout rsa_private.pem -nodes -out rsa_cert.pem -subj "/CN=unused"
+# Demo-proofing! Remove these two lines to generate your own certs
+cp .rsa_cert.pem rsa_cert.pem
+cp .rsa_private.pem rsa_private.pem
+echo
+
+echo -e "$PROMPT cat rsa_cert.pem"
+read
+cat rsa_cert.pem
+echo
+read
+
+
+echo 'Grab the demo code'
+echo -e $PROMPT git clone https://github.com/GoogleCloudPlatform/nodejs-docs-samples
+read
+
+rm -rf nodejs-docs-samples
+git clone https://github.com/GoogleCloudPlatform/nodejs-docs-samples
+echo
+
+echo -e $PROMPT cd nodejs-docs-samples/iot/mqtt_example
+read
+cd nodejs-docs-samples/iot/mqtt_example
+echo
+
+echo -e $PROMPT cp ../../../rsa_private.pem .
+read
+
+cp -v ../../../rsa_private.pem .
+
+echo
+echo -e $PROMPT npm install
+read
+npm install
+#read
+
+clear
+echo Demo code deployed.
+echo PubSub:
+echo
+echo -e $PROMPT gcloud pubsub subscriptions create projects/$PROJECT_ID/subscriptions/my-subscription --topic=projects/$PROJECT_ID/topics/$TOPIC
+read
+echo Creating subscription...
+gcloud pubsub subscriptions create projects/$PROJECT_ID/subscriptions/my-subscription --topic=projects/$PROJECT_ID/topics/$TOPIC
+
+echo
+echo Now to execute our virtual IoT device
+echo
+echo -e $PROMPT node cloudiot_mqtt_example_nodejs.js --projectId=$PROJECT_ID --cloudRegion=$REGION --registryId=$REGISTRY --deviceId=$DEVICE --privateKeyFile=rsa_private.pem --numMessages=7 --mqttBridgePort=443 --algorithm=RS256
+read
+
+node cloudiot_mqtt_example_nodejs.js \
+    --projectId=$PROJECT_ID \
+    --cloudRegion=$REGION \
+    --registryId=$REGISTRY \
+    --deviceId=$DEVICE \
+    --privateKeyFile=rsa_private.pem \
+    --numMessages=7 \
+    --mqttBridgePort=443 \
+    --algorithm=RS256
+
+echo
+echo -e $PROMPT gcloud pubsub subscriptions pull --auto-ack projects/PROJECT_ID/subscriptions/my-subscription
+#read
+#gcloud pubsub subscriptions pull --auto-ack \
+#    projects/PROJECT_ID/subscriptions/my-subscription
+
